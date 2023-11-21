@@ -44,6 +44,7 @@ const TweetBox = (props) => {
     console.log(data);
 
     const response = await httpService.createPost(data);
+
     console.log(response);
     try {
       setContent("");
