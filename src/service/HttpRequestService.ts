@@ -26,6 +26,7 @@ const httpRequestService = {
         Authorization: localStorage.getItem("token"),
       },
     });
+
     if (res.status === 201) {
       const { upload } = S3Service;
       for (const imageUrl of res.data.images) {
@@ -44,6 +45,16 @@ const httpRequestService = {
         limit,
         after,
       },
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+  },
+  getPresignedUrlPost: async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/post/image/presignedUrl`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      }
     });
     if (res.status === 200) {
       return res.data;

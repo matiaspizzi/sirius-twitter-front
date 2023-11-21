@@ -12,10 +12,12 @@ import { StyledTweetBoxContainer } from "./TweetBoxContainer";
 import { StyledContainer } from "../common/Container";
 import { StyledButtonContainer } from "./ButtonContainer";
 import { useDispatch, useSelector } from "react-redux";
+import { S3Service } from "../../service/S3Service";
 
 const TweetBox = (props) => {
   const { parentId, close, mobile } = props;
   const [content, setContent] = useState("");
+  const [imagesFiles, setImagesFiles] = useState([]);
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
 
@@ -28,8 +30,24 @@ const TweetBox = (props) => {
     setContent(e.target.value);
   };
   const handleSubmit = async () => {
+    imagesFiles.forEach(async (imageFile) => {
+      const response = await httpService.getPresignedUrlPost()
+      const { presignedUrl, fileUrl } = response.data;
+      S3Service.upload(imageFile, presignedUrl).then(() => {
+        console.log("success")
+        setImages([...images, fileUrl]);
+      }).catch((e) => {
+        console.log(e);
+      })
+    })
+    const data = { content, images };
+    console.log(data);
+
+    const response = await httpService.createPost(data);
+    console.log(response);
     try {
       setContent("");
+      setImagesFiles([]);
       setImages([]);
       setImagesPreview([]);
       dispatch(setLength(length + 1));
@@ -42,15 +60,15 @@ const TweetBox = (props) => {
   };
 
   const handleRemoveImage = (index) => {
-    const newImages = images.filter((i, idx) => idx !== index);
-    const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
-    setImages(newImages);
+    const newImagesFiles = imagesFiles.filter((i, idx) => idx !== index);
+    const newImagesPreview = newImagesFiles.map((i) => URL.createObjectURL(i));
+    setImagesFiles(newImagesFiles);
     setImagesPreview(newImagesPreview);
   };
 
-  const handleAddImage = (newImages) => {
-    setImages(newImages);
-    const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
+  const handleAddImage = (newImagesFiles) => {
+    setImagesFiles(newImagesFiles);
+    const newImagesPreview = newImagesFiles.map((i) => URL.createObjectURL(i));
     setImagesPreview(newImagesPreview);
   };
 
@@ -98,8 +116,8 @@ const TweetBox = (props) => {
               disabled={
                 content.length <= 0 ||
                 content.length > 240 ||
-                images.length > 4 ||
-                images.length < 0
+                imagesFiles.length > 4 ||
+                imagesFiles.length < 0
               }
             />
           )}
