@@ -36,8 +36,8 @@ const httpRequestService = {
       return res.data;
     }
   },
-  getPaginatedPosts: async (limit: number, after: string, query: string) => {
-    const res = await axios.get(`${url}/post/${query}`, {
+  getPaginatedPosts: async (limit: number, after: string) => {
+    const res = await axios.get(`${url}/post/`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -104,24 +104,29 @@ const httpRequestService = {
       return res.data;
     }
   },
-  createReaction: async (postId: string, reaction: string) => {
-    const res = await axios.post(
-      `${url}/reaction/${postId}`,
-      { type: reaction },
-      {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      }
-    );
+  createReaction: async (postId: string, type: string) => {
+    console.log(localStorage.getItem("token"));
+
+    const res = await axios.post(`${url}/reaction/${postId}`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: {
+        type
+      },
+    });
+    console.log(res)
     if (res.status === 201) {
       return res.data;
     }
   },
-  deleteReaction: async (reactionId: string) => {
+  deleteReaction: async (reactionId: string, type: string) => {
     const res = await axios.delete(`${url}/reaction/${reactionId}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
+      },
+      params: {
+        type
       },
     });
     if (res.status === 200) {
@@ -131,7 +136,6 @@ const httpRequestService = {
   followUser: async (userId: string) => {
     const res = await axios.post(
       `${url}/follow/${userId}`,
-      {},
       {
         headers: {
           Authorization: localStorage.getItem("token"),

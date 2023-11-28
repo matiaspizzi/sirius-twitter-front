@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Button from "../button/Button";
 import TweetInput from "../tweet-input/TweetInput";
 import { useHttpRequestService } from "../../service/HttpRequestService";
@@ -21,7 +21,7 @@ const TweetBox = (props) => {
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
 
-  const { user, length, query } = useSelector((state) => state.user);
+  const { user, length } = useSelector((state) => state.user);
   const httpService = useHttpRequestService();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -41,18 +41,16 @@ const TweetBox = (props) => {
       })
     })
     const data = { content, images };
-    console.log(data);
 
     const response = await httpService.createPost(data);
 
-    console.log(response);
     try {
       setContent("");
       setImagesFiles([]);
       setImages([]);
       setImagesPreview([]);
       dispatch(setLength(length + 1));
-      const posts = await httpService.getPosts(length + 1, "", query);
+      const posts = await httpService.getPaginatedPosts(length + 1, "");
       dispatch(updateFeed(posts));
       close && close();
     } catch (e) {
