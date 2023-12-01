@@ -28,11 +28,6 @@ const httpRequestService = {
     });
 
     if (res.status === 201) {
-      const { upload } = S3Service;
-      for (const imageUrl of res.data.images) {
-        const index: number = res.data.images.indexOf(imageUrl);
-        await upload(data.images![index], imageUrl);
-      }
       return res.data;
     }
   },
@@ -105,18 +100,12 @@ const httpRequestService = {
     }
   },
   createReaction: async (postId: string, type: string) => {
-    console.log(localStorage.getItem("token"));
-
-    const res = await axios.post(`${url}/reaction/${postId}`, {
+    const res = await axios.post(`${url}/reaction/${postId}?type=${type}`, {}, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
-      params: {
-        type
-      },
     });
-    console.log(res)
-    if (res.status === 201) {
+    if (res.status === 200) {
       return res.data;
     }
   },
@@ -135,7 +124,7 @@ const httpRequestService = {
   },
   followUser: async (userId: string) => {
     const res = await axios.post(
-      `${url}/follow/${userId}`,
+      `${url}/follower/follow/${userId}`, {},
       {
         headers: {
           Authorization: localStorage.getItem("token"),
@@ -147,7 +136,7 @@ const httpRequestService = {
     }
   },
   unfollowUser: async (userId: string) => {
-    const res = await axios.delete(`${url}/follow/${userId}`, {
+    const res = await axios.delete(`${url}/follower/unfollow/${userId}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -181,7 +170,7 @@ const httpRequestService = {
   },
 
   getProfile: async (id: string) => {
-    const res = await axios.get(`${url}/user/profile/${id}`, {
+    const res = await axios.get(`${url}/user/${id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },

@@ -91,6 +91,7 @@ const ProfilePage = () => {
       .getProfile(id)
       .then((res) => {
         setProfile(res);
+        console.log(res);
         setFollowing(
           res
             ? res?.followers.some((follower: User) => follower.id === user.id)

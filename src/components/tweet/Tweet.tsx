@@ -26,16 +26,15 @@ const Tweet = ({ post }: TweetProps) => {
   const navigate = useNavigate();
 
   const handleReaction = async (type: string) => {
+    console.log(actualPost)
     if (actualPost.reactions){
       const reacted = actualPost.reactions.find((r) => r.type === type && r.userId === user.id);
       if (reacted) {
-        console.log("borrando reaccion")
         await service.deleteReaction(reacted.id, type);
       }
     }
-    console.log("creando reaccion")
-    await service.createReaction(actualPost.id, type);
-    
+    const res = await service.createReaction(actualPost.id, type);
+    if(res != null) console.log(res)
     const newPost = await service.getPostById(post.id);
     setActualPost(newPost);
   };
@@ -57,7 +56,7 @@ const Tweet = ({ post }: TweetProps) => {
         maxHeight={"48px"}
       >
         <AuthorData
-          id={post.author.id}
+          id={post.authorId}
           name={post.author.name ?? "Name"}
           username={post.author.username}
           createdAt={post.createdAt}

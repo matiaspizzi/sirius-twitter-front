@@ -34,15 +34,14 @@ const TweetBox = (props) => {
       const response = await httpService.getPresignedUrlPost()
       const { presignedUrl, fileUrl } = response.data;
       S3Service.upload(imageFile, presignedUrl).then(() => {
-        console.log("success")
-        setImages([...images, fileUrl]);
+        setImages(images.push(fileUrl))
       }).catch((e) => {
         console.log(e);
       })
     })
     const data = { content, images };
 
-    const response = await httpService.createPost(data);
+    await httpService.createPost(data);
 
     try {
       setContent("");
