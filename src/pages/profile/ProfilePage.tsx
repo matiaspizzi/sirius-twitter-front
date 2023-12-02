@@ -80,7 +80,7 @@ const ProfilePage = () => {
         });
       } else {
         await service.followUser(id);
-        service.getProfile(id).then((res) => setProfile(res));
+        service.getProfile(id).then((res) => setProfile(res.user));
       }
       return await getProfileData();
     }
@@ -90,13 +90,9 @@ const ProfilePage = () => {
     service
       .getProfile(id)
       .then((res) => {
-        setProfile(res);
-        console.log(res);
-        setFollowing(
-          res
-            ? res?.followers.some((follower: User) => follower.id === user.id)
-            : false
-        );
+        setProfile(res.user);
+        console.log(res)
+        setFollowing(res.following);
       })
       .catch(() => {
         service
@@ -146,7 +142,7 @@ const ProfilePage = () => {
               </StyledContainer>
             </StyledContainer>
             <StyledContainer width={"100%"}>
-              {profile.followers ? (
+              {!profile.isPrivate ? (
                 <ProfileFeed />
               ) : (
                 <StyledH5>Private account</StyledH5>

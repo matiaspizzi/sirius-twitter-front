@@ -1,9 +1,8 @@
 import type { PostData, SingInData, SingUpData } from "./index";
 import axios from "axios";
-import { S3Service } from "./S3Service";
 
 const url =
-  process.env.REACT_APP_API_URL || "https://twitter-ieea.onrender.com/api";
+  process.env.REACT_APP_API_URL || "http://localhost:8080/api";
 
 const httpRequestService = {
   signUp: async (data: Partial<SingUpData>) => {
@@ -26,13 +25,26 @@ const httpRequestService = {
         Authorization: localStorage.getItem("token"),
       },
     });
-
     if (res.status === 201) {
       return res.data;
     }
   },
-  getPaginatedPosts: async (limit: number, after: string) => {
-    const res = await axios.get(`${url}/post/`, {
+  createComment: async (data: PostData) => {
+    const res = await axios.post(
+      `${url}/comment/${data.parentId}`,
+      {content: data.content, images: data.images},
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    if (res.status === 201) {
+      return res.data;
+    }
+  },
+  getPaginatedPosts: async (limit: number, after: string, query: string) => {
+    const res = await axios.get(`${url}/post/${query}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -45,21 +57,14 @@ const httpRequestService = {
       return res.data;
     }
   },
-  getPresignedUrlPost: async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/post/image/presignedUrl`, {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      }
-    });
-    if (res.status === 200) {
-      return res.data;
-    }
-  },
   getPosts: async (query: string) => {
-    const res = await axios.get(`${url}/post/${query}`, {
+    const res = await axios.get(`${url}/post/`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
+      params: {
+        limit: query[0],
+      }
     });
     if (res.status === 200) {
       return res.data;
@@ -99,23 +104,29 @@ const httpRequestService = {
       return res.data;
     }
   },
-  createReaction: async (postId: string, type: string) => {
-    const res = await axios.post(`${url}/reaction/${postId}?type=${type}`, {}, {
-      headers: {
-        Authorization: localStorage.getItem("token"),
-      },
-    });
-    if (res.status === 200) {
+  createReaction: async (postId: string, reaction: string) => {
+    const res = await axios.post(
+      `${url}/reaction/${postId}`, {},
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+        params: {
+          type: reaction,
+        },
+      }
+    );
+    if (res.status === 201) {
       return res.data;
     }
   },
-  deleteReaction: async (reactionId: string, type: string) => {
-    const res = await axios.delete(`${url}/reaction/${reactionId}`, {
+  deleteReaction: async (postId: string, reaction: string) => {
+    const res = await axios.delete(`${url}/reaction/${postId}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
       params: {
-        type
+        type: reaction,
       },
     });
     if (res.status === 200) {
@@ -124,7 +135,8 @@ const httpRequestService = {
   },
   followUser: async (userId: string) => {
     const res = await axios.post(
-      `${url}/follower/follow/${userId}`, {},
+      `${url}/follower/follow/${userId}`,
+      {},
       {
         headers: {
           Authorization: localStorage.getItem("token"),
@@ -136,7 +148,7 @@ const httpRequestService = {
     }
   },
   unfollowUser: async (userId: string) => {
-    const res = await axios.delete(`${url}/follower/unfollow/${userId}`, {
+    const res = await axios.post(`${url}/follower/unfollow/${userId}`, {}, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -310,7 +322,7 @@ const httpRequestService = {
     limit: number,
     after: string
   ) => {
-    const res = await axios.get(`${url}/post/comment/by_post/${id}`, {
+    const res = await axios.get(`${url}/comment/${id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -324,7 +336,7 @@ const httpRequestService = {
     }
   },
   getCommentsByPostId: async (id: string) => {
-    const res = await axios.get(`${url}/post/comment/by_post/${id}`, {
+    const res = await axios.get(`${url}/comment/${id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -333,6 +345,31 @@ const httpRequestService = {
       return res.data;
     }
   },
+  uploadPostImage: async (file: File) => {
+    const res = await axios.get(`${url}/post/image/presignedUrl`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: {
+        filetype: file.type,
+      },
+    });
+    if (res.status === 200) {
+      const presignedUrl = res.data.presignedUrl;
+      const imageUrl = res.data.fileUrl;
+      axios.put(presignedUrl, file, {
+        headers: {
+          "Content-Type": file.type,
+        },
+      }).then((res) => {
+        console.log("image upload to s3 " + res.status);
+        console.log(imageUrl)
+        return imageUrl;
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+  }
 };
 
 const useHttpRequestService = () => httpRequestService;

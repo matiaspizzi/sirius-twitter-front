@@ -14,7 +14,7 @@ export interface SingInData {
 export interface PostData {
   content: string;
   parentId?: string;
-  images?: string[];
+  images?: File[];
 }
 
 export interface Post {
@@ -27,9 +27,6 @@ export interface Post {
   author: Author;
   reactions: Reaction[];
   comments: Post[];
-  qtyLikes: number;
-  qtyComments: number;
-  qtyRetweets: number;
 }
 
 export interface Reaction {
@@ -55,10 +52,10 @@ export interface User {
   name?: string;
   username: string;
   profilePicture?: string;
-  private: boolean;
+  isPrivate: boolean;
   createdAt: Date;
-  followers: Author[];
-  following: Author[];
+  followers: User[];
+  following: User[];
   posts: Post[];
 }
 

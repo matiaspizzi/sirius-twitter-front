@@ -49,7 +49,7 @@ const CommentPage = () => {
     setContent("");
     setImages([]);
     dispatch(setLength(length + 1));
-    const posts = await service.getPaginatedPosts(10,"");
+    const posts = await service.getPosts(query);
     dispatch(updateFeed(posts));
     exit();
   };

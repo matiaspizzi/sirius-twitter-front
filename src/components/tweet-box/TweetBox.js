@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Button from "../button/Button";
 import TweetInput from "../tweet-input/TweetInput";
 import { useHttpRequestService } from "../../service/HttpRequestService";
@@ -12,16 +12,15 @@ import { StyledTweetBoxContainer } from "./TweetBoxContainer";
 import { StyledContainer } from "../common/Container";
 import { StyledButtonContainer } from "./ButtonContainer";
 import { useDispatch, useSelector } from "react-redux";
-import { S3Service } from "../../service/S3Service";
 
 const TweetBox = (props) => {
   const { parentId, close, mobile } = props;
   const [content, setContent] = useState("");
-  const [imagesFiles, setImagesFiles] = useState([]);
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
+  const [imagesUrl, setImagesUrl] = useState([]);
 
-  const { user, length } = useSelector((state) => state.user);
+  const { user, length, query } = useSelector((state) => state.user);
   const httpService = useHttpRequestService();
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -30,26 +29,20 @@ const TweetBox = (props) => {
     setContent(e.target.value);
   };
   const handleSubmit = async () => {
-    imagesFiles.forEach(async (imageFile) => {
-      const response = await httpService.getPresignedUrlPost()
-      const { presignedUrl, fileUrl } = response.data;
-      S3Service.upload(imageFile, presignedUrl).then(() => {
-        setImages(images.push(fileUrl))
-      }).catch((e) => {
-        console.log(e);
-      })
-    })
-    const data = { content, images };
-
-    await httpService.createPost(data);
-
     try {
+      
+      images.forEach(async (image) => {
+        const imageUrl = await httpService.uploadPostImage(image);
+        setImagesUrl((prev) => [...prev, imageUrl]);
+      });
+      const res = parentId ? await httpService.createComment({ content, images: imagesUrl, parentId }) : await httpService.createPost({ content, images: imagesUrl });
+      console.log(res)
       setContent("");
-      setImagesFiles([]);
       setImages([]);
+      setImagesUrl([]);
       setImagesPreview([]);
       dispatch(setLength(length + 1));
-      const posts = await httpService.getPaginatedPosts(length + 1, "");
+      const posts = await httpService.getPaginatedPosts(length + 1, "", query);
       dispatch(updateFeed(posts));
       close && close();
     } catch (e) {
@@ -58,15 +51,15 @@ const TweetBox = (props) => {
   };
 
   const handleRemoveImage = (index) => {
-    const newImagesFiles = imagesFiles.filter((i, idx) => idx !== index);
-    const newImagesPreview = newImagesFiles.map((i) => URL.createObjectURL(i));
-    setImagesFiles(newImagesFiles);
+    const newImages = images.filter((i, idx) => idx !== index);
+    const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
+    setImages(newImages);
     setImagesPreview(newImagesPreview);
   };
 
-  const handleAddImage = (newImagesFiles) => {
-    setImagesFiles(newImagesFiles);
-    const newImagesPreview = newImagesFiles.map((i) => URL.createObjectURL(i));
+  const handleAddImage = (newImages) => {
+    setImages(newImages);
+    const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
     setImagesPreview(newImagesPreview);
   };
 
@@ -114,8 +107,8 @@ const TweetBox = (props) => {
               disabled={
                 content.length <= 0 ||
                 content.length > 240 ||
-                imagesFiles.length > 4 ||
-                imagesFiles.length < 0
+                images.length > 4 ||
+                images.length < 0
               }
             />
           )}
