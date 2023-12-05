@@ -58,7 +58,7 @@ const httpRequestService = {
     }
   },
   getPosts: async (query: string) => {
-    const res = await axios.get(`${url}/post/`, {
+    const res = await axios.get(`${url}/post/${query}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -161,12 +161,11 @@ const httpRequestService = {
     try {
       const cancelToken = axios.CancelToken.source();
 
-      const response = await axios.get(`${url}/user/search`, {
+      const response = await axios.get(`${url}/user/by_username/${username}`, {
         headers: {
           Authorization: localStorage.getItem("token"),
         },
         params: {
-          username,
           limit,
           skip,
         },
