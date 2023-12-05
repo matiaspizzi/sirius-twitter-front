@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
 import { StyledSideBarPageWrapper } from "../../pages/side-bar-page/SideBarPageWrapper";
 import NavBar from "../navbar/NavBar";
 import SignUpPage from "../../pages/auth/sign-up/SignUpPage";
@@ -12,10 +12,12 @@ import CommentPage from "../../pages/create-comment-page/CommentPage";
 import PostPage from "../../pages/post-page/PostPage";
 
 const WithNav = () => {
+  const token = localStorage.getItem("token");
+
   return (
     <StyledSideBarPageWrapper>
       <NavBar />
-      <Outlet />
+      {token ? <Outlet /> : <Navigate to="/sign-in" replace={true} />}
     </StyledSideBarPageWrapper>
   );
 };
