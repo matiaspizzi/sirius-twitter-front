@@ -19,7 +19,9 @@ interface SignUpData {
 }
 const SignUpPage = () => {
   const [data, setData] = useState<Partial<SignUpData>>({});
-  const [error, setError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [userError, setUserError] = useState(false);
+  const [passwordMatchError, setPasswordMatchError] = useState(false);
 
   const httpRequestService = useHttpRequestService();
   const navigate = useNavigate();
@@ -30,11 +32,24 @@ const SignUpPage = () => {
       setData({ ...data, [prop]: event.target.value });
     };
   const handleSubmit = async () => {
+    setPasswordError(false);
+    setUserError(false);
+    setPasswordMatchError(false);
     const { confirmPassword, ...requestData } = data;
+    if(data.password !== data.confirmPassword){
+        setPasswordMatchError(true);
+        return;
+    }
     httpRequestService
       .signUp(requestData)
       .then(() => navigate("/"))
-      .catch(() => setError(false));
+      .catch((e) => {
+          if(e.response.data.errors[0].message === "username/email"){
+              setUserError(true);
+          } else {
+              setPasswordError(true);
+          }
+      })
   };
 
   return (
@@ -50,21 +65,20 @@ const SignUpPage = () => {
               required
               placeholder={"Enter name..."}
               title={t("input-params.name")}
-              error={error}
               onChange={handleChange("name")}
             />
             <LabeledInput
               required
               placeholder={"Enter username..."}
               title={t("input-params.username")}
-              error={error}
+              error={userError}
               onChange={handleChange("username")}
             />
             <LabeledInput
               required
               placeholder={"Enter email..."}
               title={t("input-params.email")}
-              error={error}
+              error={userError}
               onChange={handleChange("email")}
             />
             <LabeledInput
@@ -72,7 +86,7 @@ const SignUpPage = () => {
               required
               placeholder={"Enter password..."}
               title={t("input-params.password")}
-              error={error}
+              error={passwordError}
               onChange={handleChange("password")}
             />
             <LabeledInput
@@ -80,7 +94,7 @@ const SignUpPage = () => {
               required
               placeholder={"Confirm password..."}
               title={t("input-params.confirm-password")}
-              error={error}
+              error={passwordMatchError}
               onChange={handleChange("confirmPassword")}
             />
           </div>
