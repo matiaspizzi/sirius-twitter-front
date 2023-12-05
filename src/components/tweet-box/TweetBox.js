@@ -18,7 +18,6 @@ const TweetBox = (props) => {
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
-  const [imagesUrl, setImagesUrl] = useState([]);
 
   const { user, length, query } = useSelector((state) => state.user);
   const httpService = useHttpRequestService();
@@ -30,16 +29,18 @@ const TweetBox = (props) => {
   };
   const handleSubmit = async () => {
     try {
-      
-      images.forEach(async (image) => {
-        const imageUrl = await httpService.uploadPostImage(image);
-        setImagesUrl((prev) => [...prev, imageUrl]);
-      });
-      const res = parentId ? await httpService.createComment({ content, images: imagesUrl, parentId }) : await httpService.createPost({ content, images: imagesUrl });
+      const urls = await Promise.all(
+        images.map(async (image) => {
+          const url = await httpService.uploadPostImage(image);
+          return url;
+        })
+      );
+
+      const res = parentId ? await httpService.createComment({ content, images: urls, parentId }) : await httpService.createPost({ content, images: urls });
+
       console.log(res)
       setContent("");
       setImages([]);
-      setImagesUrl([]);
       setImagesPreview([]);
       dispatch(setLength(length + 1));
       const posts = await httpService.getPaginatedPosts(length + 1, "", query);

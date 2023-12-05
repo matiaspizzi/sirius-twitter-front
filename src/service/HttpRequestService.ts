@@ -357,17 +357,22 @@ const httpRequestService = {
     if (res.status === 200) {
       const presignedUrl = res.data.presignedUrl;
       const imageUrl = res.data.fileUrl;
-      axios.put(presignedUrl, file, {
-        headers: {
-          "Content-Type": file.type,
-        },
-      }).then((res) => {
-        console.log("image upload to s3 " + res.status);
-        console.log(imageUrl)
-        return imageUrl;
-      }).catch((err) => {
-        console.log(err);
-      });
+  
+      try {
+        const uploadResponse = await axios.put(presignedUrl, file, {
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+        if (uploadResponse.status === 200) {
+          console.log("image upload to s3 successful");
+          return imageUrl;
+        } else {
+          console.log("image upload to s3 failed");
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 };

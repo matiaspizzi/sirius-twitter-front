@@ -13,7 +13,6 @@ import ImageContainer from "./tweet-image/ImageContainer";
 import CommentModal from "../comment/comment-modal/CommentModal";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../redux/hooks";
-import { typeImplementation } from "@testing-library/user-event/dist/type/typeImplementation";
 
 interface TweetProps {
   post: Post;
@@ -25,10 +24,6 @@ const Tweet = ({ post }: TweetProps) => {
   const user = useAppSelector((state) => state.user.user);
   const service = useHttpRequestService();
   const navigate = useNavigate();
-
-  const getCountByType = (type: string): number => {
-    return actualPost.reactions.filter((r) => r.type === type).length ?? 0;
-  };
 
   const handleReaction = async (type: string) => {
     const reacted = actualPost.reactions.find(
@@ -93,7 +88,7 @@ const Tweet = ({ post }: TweetProps) => {
       <StyledReactionsContainer>
         <Reaction
           img={IconType.CHAT}
-          count={actualPost.comments?.length}
+          count={actualPost.qtyComments}
           reactionFunction={() =>
             window.innerWidth > 600
               ? setShowCommentModal(true)
@@ -104,14 +99,14 @@ const Tweet = ({ post }: TweetProps) => {
         />
         <Reaction
           img={IconType.RETWEET}
-          count={getCountByType("RETWEET")}
+          count={actualPost.qtyRetweets}
           reactionFunction={() => handleReaction("RETWEET")}
           increment={1}
           reacted={hasReactedByType("RETWEET")}
         />
         <Reaction
           img={IconType.LIKE}
-          count={getCountByType("LIKE")}
+          count={actualPost.qtyLikes}
           reactionFunction={() => handleReaction("LIKE")}
           increment={1}
           reacted={hasReactedByType("LIKE")}
