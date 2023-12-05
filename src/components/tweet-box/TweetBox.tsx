@@ -12,19 +12,27 @@ import { StyledTweetBoxContainer } from "./TweetBoxContainer";
 import { StyledContainer } from "../common/Container";
 import { StyledButtonContainer } from "./ButtonContainer";
 import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
-const TweetBox = (props) => {
+interface TweetBoxProps {
+  parentId?: string;
+  close?: () => void;
+  mobile?: boolean;
+  borderless?: any
+}
+
+const TweetBox = (props: TweetBoxProps) => {
   const { parentId, close, mobile } = props;
   const [content, setContent] = useState("");
-  const [images, setImages] = useState([]);
-  const [imagesPreview, setImagesPreview] = useState([]);
+  const [images, setImages] = useState([] as File[]);
+  const [imagesPreview, setImagesPreview] = useState([] as string[]);
 
-  const { user, length, query } = useSelector((state) => state.user);
+  const { user, length, query } = useSelector((state: RootState) => state.user)
   const httpService = useHttpRequestService();
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value);
   };
   const handleSubmit = async () => {
@@ -51,14 +59,14 @@ const TweetBox = (props) => {
     }
   };
 
-  const handleRemoveImage = (index) => {
+  const handleRemoveImage = (index: number) => {
     const newImages = images.filter((i, idx) => idx !== index);
     const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
     setImages(newImages);
     setImagesPreview(newImagesPreview);
   };
 
-  const handleAddImage = (newImages) => {
+  const handleAddImage = (newImages: File[]) => {
     setImages(newImages);
     const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
     setImagesPreview(newImagesPreview);
