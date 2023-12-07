@@ -10,11 +10,17 @@ interface PostModalProps {
 }
 
 export const PostModal = ({ onClose, show, children }: PostModalProps) => {
+  const handleClickOutside = (event: React.MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
     <>
       {show && (
-        <StyledBlurredBackground>
-          <StyledTweetModalContainer>
+        <StyledBlurredBackground onClick={handleClickOutside}>
+          <StyledTweetModalContainer onClick={e => e.stopPropagation()}>
             <ModalCloseButton onClick={onClose} />
             {children}
           </StyledTweetModalContainer>
