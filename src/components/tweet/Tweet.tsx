@@ -77,7 +77,7 @@ const Tweet = ({ post }: TweetProps) => {
           </>
         )}
       </StyledContainer>
-      <StyledContainer onClick={() => navigate(`/post/${post.id}`)}>
+      <StyledContainer onClick={() => navigate(`/post/${post.id}`)} cursor={"pointer"}>
         <p>{post.content}</p>
       </StyledContainer>
       {post.images && post.images!.length > 0 && (
