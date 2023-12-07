@@ -60,11 +60,18 @@ const httpRequestService = {
     }
   },
   getRecommendedUsers: async (limit: number, skip: number) => {
-    const res = await axios.get(`${url}/user`, {
+    const res = await axios.get(`${url}/user/`, {
       params: {
         limit,
         skip,
       },
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+  },
+  doesFollow: async (id: string) => {
+    const res = await axios.get(`${url}/follower/follow/${id}`, {
     });
     if (res.status === 200) {
       return res.data;
@@ -108,17 +115,13 @@ const httpRequestService = {
     }
   },
   followUser: async (userId: string) => {
-    const res = await axios.post(
-      `${url}/follower/follow/${userId}`,
-      {}
-    );
+    const res = await axios.post(`${url}/follower/follow/${userId}`, {});
     if (res.status === 201) {
       return res.data;
     }
   },
   unfollowUser: async (userId: string) => {
-    const res = await axios.post(`${url}/follower/unfollow/${userId}`, {}, {
-    });
+    const res = await axios.post(`${url}/follower/unfollow/${userId}`, {});
     if (res.status === 200) {
       return res.data;
     }
@@ -283,10 +286,7 @@ const httpRequestService = {
           },
         });
         if (uploadResponse.status === 200) {
-          console.log("image upload to s3 successful");
           return imageUrl;
-        } else {
-          console.log("image upload to s3 failed");
         }
       } catch (err) {
         console.error(err);

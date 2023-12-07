@@ -91,7 +91,6 @@ const ProfilePage = () => {
       .getProfile(id)
       .then((res) => {
         setProfile(res.user);
-        console.log(res)
         setFollowing(res.following);
       })
       .catch(() => {
