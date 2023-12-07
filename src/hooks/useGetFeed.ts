@@ -6,28 +6,41 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 export const useGetFeed = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [canLoad, setCanLoad] = useState(true);
   const posts = useAppSelector((state) => state.user.feed);
-  const query = useAppSelector((state) => state.user.query);
 
   const dispatch = useAppDispatch();
 
   const service = useHttpRequestService();
 
-  useEffect(() => {
+  const loadMore = async () => {
+    if (loading || !canLoad) return;
+
+    setLoading(true);
+    setError(false);
+
     try {
-      setLoading(true);
-      setError(false);
-      service.getPosts(query).then((res) => {
-        const updatedPosts = Array.from(new Set([...posts, ...res]));
+      const lastPostId = posts[posts.length - 1]?.id || '';
+      const newPosts = await service.getPaginatedPosts(5, lastPostId, '');
+
+      if (newPosts.length === 0) {
+        setCanLoad(false);
+      } else {
+        const updatedPosts = [...posts, ...newPosts];
         dispatch(updateFeed(updatedPosts));
         dispatch(setLength(updatedPosts.length));
-        setLoading(false);
-      });
+      }
     } catch (e) {
       setError(true);
       console.log(e);
+    } finally {
+      setLoading(false);
     }
-  }, [query]);
+  };
 
-  return { posts, loading, error };
+  useEffect(() => {
+    loadMore();
+  }, []);
+
+  return { posts, loading, error, loadMore, canLoad };
 };
