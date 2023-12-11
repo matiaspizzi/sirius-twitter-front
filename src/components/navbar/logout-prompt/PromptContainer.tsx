@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const StyledPromptContainer = styled.div`
   display: flex;
-  min-width: 304px;
+  min-width: 204px;
   padding: 16px;
   flex-direction: column;
   justify-content: center;

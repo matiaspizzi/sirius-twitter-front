@@ -9,6 +9,8 @@ import LabeledInput from "../../../components/labeled-input/LabeledInput";
 import Button from "../../../components/button/Button";
 import { ButtonType } from "../../../components/button/StyledButton";
 import { StyledH3 } from "../../../components/common/text";
+import { useFormik } from "formik";
+import { validationSchema } from "./validationSchema";
 
 interface SignUpData {
   name: string;
@@ -18,39 +20,29 @@ interface SignUpData {
   confirmPassword: string;
 }
 const SignUpPage = () => {
-  const [data, setData] = useState<Partial<SignUpData>>({});
-  const [passwordError, setPasswordError] = useState(false);
-  const [userError, setUserError] = useState(false);
-  const [passwordMatchError, setPasswordMatchError] = useState(false);
-
   const httpRequestService = useHttpRequestService();
   const navigate = useNavigate();
   const { t } = useTranslation();
-
-  const handleChange =
-    (prop: string) => (event: ChangeEvent<HTMLInputElement>) => {
-      setData({ ...data, [prop]: event.target.value });
-    };
-  const handleSubmit = async () => {
-    setPasswordError(false);
-    setUserError(false);
-    setPasswordMatchError(false);
-    const { confirmPassword, ...requestData } = data;
-    if(data.password !== data.confirmPassword){
-        setPasswordMatchError(true);
-        return;
-    }
-    httpRequestService
+  const [error, setError] = useState("");
+  const formik = useFormik<SignUpData>({
+    initialValues: {
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values: SignUpData) => {
+      const { confirmPassword, ...requestData } = values;
+      httpRequestService
       .signUp(requestData)
       .then(() => navigate("/"))
       .catch((e) => {
-          if(e.response.data.errors[0].message === "username/email"){
-              setUserError(true);
-          } else {
-              setPasswordError(true);
-          }
+        setError(e.response.data.errors[0].message);
       })
-  };
+    },
+  });
 
   return (
     <AuthWrapper>
@@ -65,45 +57,65 @@ const SignUpPage = () => {
               required
               placeholder={"Enter name..."}
               title={t("input-params.name")}
-              onChange={handleChange("name")}
+              onChange={formik.handleChange("name")}
+              value={formik.values.name}
+              error={formik.touched.name && !!formik.errors.name}
+              helperText={formik.touched.name && formik.errors.name}
             />
             <LabeledInput
               required
               placeholder={"Enter username..."}
               title={t("input-params.username")}
-              error={userError}
-              onChange={handleChange("username")}
+              value={formik.values.username}
+              onChange={formik.handleChange("username")}
+              error={formik.touched.username && !!formik.errors.username}
+              helperText={formik.touched.username && formik.errors.username}
             />
             <LabeledInput
               required
               placeholder={"Enter email..."}
               title={t("input-params.email")}
-              error={userError}
-              onChange={handleChange("email")}
+              value={formik.values.email}
+              onChange={formik.handleChange("email")}
+              error={formik.touched.email && !!formik.errors.email}
+              helperText={formik.touched.email && formik.errors.email}
             />
             <LabeledInput
               type="password"
               required
               placeholder={"Enter password..."}
               title={t("input-params.password")}
-              error={passwordError}
-              onChange={handleChange("password")}
+              value={formik.values.password}
+              onChange={formik.handleChange("password")}
+              error={formik.touched.password && !!formik.errors.password}
+              helperText={formik.touched.password && formik.errors.password}
             />
             <LabeledInput
               type="password"
               required
               placeholder={"Confirm password..."}
               title={t("input-params.confirm-password")}
-              error={passwordMatchError}
-              onChange={handleChange("confirmPassword")}
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange("confirmPassword")}
+              error={
+                formik.touched.confirmPassword &&
+                !!formik.errors.confirmPassword
+              }
+              helperText={
+                formik.touched.confirmPassword && formik.errors.confirmPassword
+              }
             />
           </div>
+          <p className={"error-message"}>{error}</p>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <Button
               text={t("buttons.register")}
               buttonType={ButtonType.FOLLOW}
               size={"MEDIUM"}
-              onClick={handleSubmit}
+              onClick={(e) => {
+                e.preventDefault();
+                formik.handleSubmit();
+              }}
             />
             <Button
               text={t("buttons.login")}
