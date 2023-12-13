@@ -54,6 +54,15 @@ const NavBar = () => {
             active={location.pathname === "/"}
           />
           <NavItem
+            title={t("navbar.messages")}
+            onClick={() => {
+              navigate(`/chat/`);
+            }}
+            icon={IconType.MESSAGES}
+            selectedIcon={IconType.ACTIVE_MESSAGES}
+            active={location.pathname === `/chat/`}
+          />
+          <NavItem
             title={t("navbar.profile")}
             onClick={() => {
               navigate(`/profile/${user.id}`);

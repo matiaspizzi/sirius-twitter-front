@@ -19,9 +19,8 @@ export const UserDataBox = ({
   onClick,
 }: UserDataBoxProps) => {
   const navigate = useNavigate();
-
   return (
-    <StyledUserDataBoxContainer onClick={() => onClick ?? navigate(`/profile/${id}`)}>
+    <StyledUserDataBoxContainer onClick={() => onClick ? onClick() : navigate(`/profile/${id}`)}>
         <Avatar
           src={profilePicture ?? icon}
           alt={name ?? "Name"}
