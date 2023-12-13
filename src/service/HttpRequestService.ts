@@ -202,8 +202,8 @@ const httpRequestService = {
     }
   },
 
-  getChats: async () => {
-    const res = await axios.get(`${url}/chat`, {
+  getContacts: async () => {
+    const res = await axios.get(`${url}/message/chat`, {
     });
 
     if (res.status === 200) {
@@ -212,7 +212,7 @@ const httpRequestService = {
   },
 
   getMutualFollows: async () => {
-    const res = await axios.get(`${url}/follow/mutual`, {
+    const res = await axios.get(`${url}/follower/mutual/`, {
     });
 
     if (res.status === 200) {
@@ -234,7 +234,7 @@ const httpRequestService = {
   },
 
   getChat: async (id: string) => {
-    const res = await axios.get(`${url}/chat/${id}`, {
+    const res = await axios.get(`${url}/message/chat/${id}`, {
     });
 
     if (res.status === 200) {
