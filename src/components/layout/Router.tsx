@@ -10,6 +10,7 @@ import ProfilePage from "../../pages/profile/ProfilePage";
 import TweetPage from "../../pages/create-tweet-page/TweetPage";
 import CommentPage from "../../pages/create-comment-page/CommentPage";
 import PostPage from "../../pages/post-page/PostPage";
+import ChatPage from "../../pages/chat-page/ChatPage";
 
 const WithNav = () => {
   const token = localStorage.getItem("token");
@@ -58,6 +59,10 @@ export const ROUTER = createBrowserRouter([
         path: "/post/:id",
         element: <CommentPage />,
       },
+      {
+        path: "/chat",
+        element: <ChatPage />,
+      }
     ],
   },
 ]);
