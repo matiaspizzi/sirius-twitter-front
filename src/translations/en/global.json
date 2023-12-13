@@ -4,11 +4,13 @@
     "for-you": "For You",
     "following": "Following",
     "connect": "Connect",
-    "messages": "Messages"
+    "messages": "Messages",
+    "contacts": "Contacts"
   },
   "navbar": {
     "home": "Home",
-    "profile": "Profile"
+    "profile": "Profile",
+    "messages": "Messages"
   },
   "suggestion": {
     "who-to-follow": "Who to follow",

@@ -4,12 +4,13 @@
     "for-you": "Para tí",
     "following": "Seguidos",
     "connect": "Conectar",
-    "messages": "Mensajes"
+    "messages": "Mensajes",
+    "contacts": "Contactos"
   },
   "navbar": {
     "home": "Principal",
     "explore": "Explorar",
-    "message": "Mensajes",
+    "messages": "Mensajes",
     "profile": "Perfil"
   },
   "suggestion": {
