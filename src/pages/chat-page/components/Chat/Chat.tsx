@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useHttpRequestService } from "../../../../service/HttpRequestService";
 import { StyledChatContainer } from "./ChatContainer";
 import MessageContainer from "../message/MessageContainer";
 import InputMessage from "../inputMessage/InputMessage";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import { useTranslation } from "react-i18next";
 
 interface Contact {
@@ -30,7 +30,7 @@ const Chat = ({ contact }: ChatProps) => {
   const service = useHttpRequestService();
   const t = useTranslation().t;
   const token = localStorage.getItem("token")?.split(" ")[1];
-  const socket = io(`http://localhost:8080?token=${token}`);
+  const socketRef = useRef<Socket | null>(null);
 
   const handleMessages = async () => {
     try {
@@ -43,19 +43,25 @@ const Chat = ({ contact }: ChatProps) => {
   };
 
   useEffect(() => {
+    socketRef.current = io(`http://localhost:8080?token=${token}`);
+
     if (contact) {
       handleMessages().then();
-      socket.on("message", (message) => {
+      socketRef.current.on("message", (message) => {
         if (!messages.includes(message)) {
           setMessages((messages) => [...messages, message]);
         }
       });
     }
+
+    return () => {
+      socketRef.current?.disconnect();
+    };
   }, [contact]);
 
   const handleSubmit = (content: string) => {
-    if (socket) {
-      socket?.emit("message", { to: contact!.id, content });
+    if (socketRef.current) {
+      socketRef.current?.emit("message", { to: contact!.id, content });
     }
   };
 
