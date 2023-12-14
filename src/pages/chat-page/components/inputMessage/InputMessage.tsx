@@ -9,10 +9,18 @@ interface InputMessageProps {
 const InputMessage = ({ handleSendMessage }: InputMessageProps) => {
     const [message, setMessage] = useState<string>("");
 
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        handleSendMessage(message);
+        setMessage("");
+    }
+
     return (
         <StyledInputMessage>
-            <input type="text" placeholder="Message" onChange={(e) => setMessage(e.target.value)} value={message}/>
-            <button onClick={() => handleSendMessage(message)}>Send</button>
+            <form onSubmit={handleSubmit}>
+                <input type="text" value={message} onChange={(e) => setMessage(e.target.value)} />
+                <button type="submit">Send</button>
+            </form>
         </StyledInputMessage>
     );
 }
