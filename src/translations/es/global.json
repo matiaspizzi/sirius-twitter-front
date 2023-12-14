@@ -7,6 +7,11 @@
     "messages": "Mensajes",
     "contacts": "Contactos"
   },
+  "message": {
+    "selectContact": "Selecciona un contacto para comenzar una conversación",
+    "noContacts": "No tienes contactos, ¡agrega algunos!",
+    "noMessages": "No tienes mensajes, ¡comienza a escribir!"
+  },
   "navbar": {
     "home": "Principal",
     "explore": "Explorar",

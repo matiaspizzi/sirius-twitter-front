@@ -7,6 +7,11 @@
     "messages": "Messages",
     "contacts": "Contacts"
   },
+  "message": {
+    "selectContact": "Select a contact to start a chat",
+    "noContacts": "You don't have any contacts yet. Add some!",
+    "noMessages": "You don't have any messages yet. Start chatting!"
+  },
   "navbar": {
     "home": "Home",
     "profile": "Profile",
