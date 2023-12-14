@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { useHttpRequestService } from "../../../../service/HttpRequestService";
-import { useAppDispatch } from "../../../../redux/hooks";
-import { setUser } from "../../../../redux/user";
-import { useNavigate } from "react-router-dom";
 import UserDataBox from "../../../../components/user-data-box/UserDataBox";
 import {StyledMessageContainer} from "./StyledMessageContainer";
 import Message from "../message/Message";
+import { useTranslation } from "react-i18next";
 
-interface Message {
+interface iMessage {
     content: string;
     createdAt: string;
-    senderId: string;
-    receiverId: string;
+    from: string;
+    to: string;
+    id: string;
 }
 
 interface Contact {
@@ -22,34 +19,34 @@ interface Contact {
 }
 
 interface MessageContainerProps {
-    messages: Message[];
+    messages: iMessage[];
     contact: Contact | null;
 }
 
 const MessageContainer = ({ messages, contact }: MessageContainerProps) => {
+    const { t } = useTranslation();
 
     if (!contact) {
         return (
             <StyledMessageContainer>
-                <h1>Message</h1>
-                <p>Please select a contact</p>
+                <h4>{t("message.selectContact")}</h4>
             </StyledMessageContainer>
         );
     }
 
     return (
         <StyledMessageContainer>
-            <h1>Message</h1>
             <UserDataBox
                 name={contact.name}
                 username={contact.username}
                 profilePicture={contact.profilePicture}
                 id={contact.id}
             />
-            <div>
+            <div className="messages-div">
+                {messages.length === 0 && <h4>{t("message.noMessages")}</h4>}
                 {messages.map((message) => {
                     return (
-                        <Message content={message.content} createdAt={message.createdAt} senderId={message.senderId} receiverId={message.receiverId} />
+                        <Message content={message.content} createdAt={message.createdAt} from={message.from} to={message.to} id={message.id} key={message.id}/>
                     );
                 })}
             </div>
