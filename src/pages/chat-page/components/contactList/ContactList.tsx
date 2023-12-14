@@ -28,9 +28,14 @@ const ContactList = ({ handleContact }: ContactListProps) => {
         try {
             const data = await service.getContacts();
             const mutualFollows: Contact[] = await service.getMutualFollows();
-            const filteredContacts = [...data, ...mutualFollows]
-            console.log(filteredContacts)
-            setContacts(filteredContacts);
+            const allContacts = [...data, ...mutualFollows];
+            const removedDuplicates = allContacts.filter((contact, index, self) =>
+                index === self.findIndex((t) => (
+                    t.id === contact.id
+                ))
+            )
+            console.log(removedDuplicates)
+            setContacts(removedDuplicates);
         } catch (e) {
             navigate("/sign-in");
         }
@@ -44,7 +49,7 @@ const ContactList = ({ handleContact }: ContactListProps) => {
         <>
             <StyledContactListContainer>
                 <h5>{t("header.contacts")}</h5>
-
+                {contacts.length === 0 && <h4>{t("message.noContacts")}</h4>}
                 {contacts.map((contact) => {
                     return (
                         <UserDataBox name={contact.name} id={contact.id} username={contact.username} profilePicture={contact.profilePicture} onClick={() => handleContact(contact)} />
