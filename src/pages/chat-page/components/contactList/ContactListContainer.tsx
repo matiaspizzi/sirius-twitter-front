@@ -5,7 +5,7 @@ export const StyledContactListContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 35%;
-  height: content-fit;
+  height: 100%;
   border-right: 1px solid ${(props) => props.theme.colors.containerLine};
 
   h5 {
@@ -19,6 +19,23 @@ export const StyledContactListContainer = styled.div`
     padding: 16px;
     margin-top: 0;
     margin-bottom: 0;
+  }
+
+  h4 {
+    color: var(--grayscale-black, #000);
+    /* Body */
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.1px;
+    padding: 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  UserDataBox {
+    height: 200px;
   }
 
   @media (max-width: 600px) {

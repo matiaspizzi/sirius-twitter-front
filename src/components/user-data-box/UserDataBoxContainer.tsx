@@ -6,7 +6,7 @@ export const StyledUserDataBoxContainer = styled.div`
     align-items: flex-start;
     gap: 10px;
     width: 100%;
-    height: 100%;
+    height: content-fit;
     padding: 4px;
     box-sizing: border-box;
     background-color: #fff;

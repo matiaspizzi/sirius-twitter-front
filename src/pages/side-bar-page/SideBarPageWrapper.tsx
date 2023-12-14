@@ -12,11 +12,16 @@ export const StyledSideBarPageWrapper = styled.div`
   padding-left: 15%;
   padding-right: 15%;
 
+  @media (max-width: 1300px) {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
   @media (max-width: 600px) {
     justify-content: flex-start;
     flex-direction: column;
 
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 0px;
+    padding-right: 0px;
   }
 `;

@@ -5,8 +5,8 @@ export const StyledMessageContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  height: content-fit;
-  border-right: 1px solid grey;
+  border-top: 1px solid ${(props) => props.theme.colors.containerLine};
+  overflow-y: hidden;
 
   h5 {
     color: var(--grayscale-black, #000);
@@ -21,9 +21,21 @@ export const StyledMessageContainer = styled.div`
     margin-bottom: 0;
   }
 
-  @media (max-width: 600px) {
-    .tweet-box-container {
-      display: none;
-    }
+  h4 {
+    color: var(--grayscale-black, #000);
+    /* Body */
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    line-height: 150%;
+    letter-spacing: -0.1px;
+    padding: 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .messages-div {
+    width: 100%;
+    overflow-y: scroll;
   }
 `;
