@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useHttpRequestService } from "../../../../service/HttpRequestService";
 import { StyledChatContainer } from "./ChatContainer";
-import { UserDataBox } from "../../../../components/user-data-box/UserDataBox";
 import MessageContainer from "../message/MessageContainer";
 import InputMessage from "../inputMessage/InputMessage";
 import io from 'socket.io-client'
+import { useTranslation } from "react-i18next";
 
 interface Contact {
     name: string;
@@ -16,8 +16,9 @@ interface Contact {
 interface Message {
     content: string;
     createdAt: string;
-    senderId: string;
-    receiverId: string;
+    from: string;
+    to: string;
+    id: string;
 }
 
 interface ChatProps {
@@ -27,20 +28,17 @@ interface ChatProps {
 const Chat = ({ contact }: ChatProps) => {
     
     const [messages, setMessages] = useState<Message[]>([]);
-    const [message, setMessage] = useState<string>("");
     const service = useHttpRequestService();
-    const token = localStorage.getItem("token");
-    const socket = io("http://localhost:8080", {
-        auth: {
-            token: token
-            }
-        })
+    const t = useTranslation().t;
+    const token = localStorage.getItem("token")?.split(" ")[1]
+    const socket = io(`http://localhost:8080?token=${token}`)
 
     const handleMessages = async () => {
         try {
             if(!contact) return console.log("No contact")
             const data = await service.getChat(contact.id);
             setMessages(data);
+            console.log(data)
         } catch (e) {
             console.log(e);
         }
@@ -62,15 +60,16 @@ const Chat = ({ contact }: ChatProps) => {
         console.log(content)
         if(socket){
             socket?.emit('message', {to: contact!.id, content})
-            setMessage('')
         }
     }
 
 
     return (
         <StyledChatContainer>
+            <h5>{t("header.messages")}</h5>
+
             <MessageContainer messages={messages} contact={contact} />
-            <InputMessage handleSendMessage={handleSubmit}/>
+            { contact && <InputMessage handleSendMessage={handleSubmit}/>}
         </StyledChatContainer>
     );
 }

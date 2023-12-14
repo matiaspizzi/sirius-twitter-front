@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ContactList from "./components/contactList/ContactList";
-import Chat from "./components/Chat/Chat";
+import Chat from "./components/chat/Chat";
 import { useHttpRequestService } from "../../service/HttpRequestService";
 import { useAppDispatch } from "../../redux/hooks";
 import { setUser } from "../../redux/user";
