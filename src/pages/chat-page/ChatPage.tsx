@@ -14,7 +14,6 @@ interface Contact {
 }
 
 const ChatPage = () => {
-  
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const service = useHttpRequestService();
@@ -36,15 +35,14 @@ const ChatPage = () => {
 
   const handleContact = (contact: Contact) => {
     setContact(contact);
-    console.log(contact)
-  }
+  };
 
-    return (
-        <>
-          <ContactList handleContact={handleContact}/>
-          <Chat contact={contact}/>
-        </>
-      );
+  return (
+    <>
+      <ContactList handleContact={handleContact} />
+      <Chat contact={contact} />
+    </>
+  );
 };
 
 export default ChatPage;
