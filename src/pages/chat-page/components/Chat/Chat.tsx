@@ -5,7 +5,6 @@ import MessageContainer from "../message/MessageContainer";
 import InputMessage from "../inputMessage/InputMessage";
 import io, { Socket } from "socket.io-client";
 import { useTranslation } from "react-i18next";
-import Loader from "../../../../components/loader/Loader";
 
 interface Contact {
   name: string;

@@ -5,7 +5,7 @@ import UserDataBox from "../../../../components/user-data-box/UserDataBox";
 import { StyledContactListContainer } from "./ContactListContainer";
 import { useTranslation } from "react-i18next";
 import Loader from "../../../../components/loader/Loader";
-import { time } from "console";
+
 interface Contact {
   name: string;
   username: string;
