@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const StyledUserDataBoxContainer = styled.div`
     display: flex;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
     width: 100%;
     height: content-fit;
@@ -15,6 +15,12 @@ export const StyledUserDataBoxContainer = styled.div`
     cursor: pointer;
 
     p {
+        font-family: "Manrope", sans-serif;
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 110%;
+        letter-spacing: -0.15px;
         margin: 0;
     }
 
