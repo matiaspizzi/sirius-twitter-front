@@ -44,7 +44,7 @@ const TweetBox = (props: TweetBoxProps) => {
         })
       );
 
-      const res = parentId ? await httpService.createComment({ content, images: urls, parentId }) : await httpService.createPost({ content, images: urls });
+      parentId ? await httpService.createComment({ content, images: urls, parentId }) : await httpService.createPost({ content, images: urls });
 
       setContent("");
       setImages([]);
