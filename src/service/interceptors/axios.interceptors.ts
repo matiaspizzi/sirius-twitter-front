@@ -5,10 +5,7 @@ export const AxiosInterceptor = () => {
   const updateHeaders = (request: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem("token");
 
-    const newHeaders = {
-      Authorization: token,
-    };
-    request.headers = newHeaders as AxiosRequestHeaders
+    request.headers = { Authorization: token } as AxiosRequestHeaders
 
     return request;
   }
