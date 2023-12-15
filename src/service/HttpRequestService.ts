@@ -4,8 +4,9 @@ import { AxiosInterceptor } from "./interceptors/axios.interceptors";
 
 AxiosInterceptor();
 
-const url =
-  process.env.REACT_APP_API_URL || "http://localhost:8080/api";
+const url = process.env.REACT_APP_API_URL || "http://localhost:8080/api";
+
+const axiosInstance = axios.create() //used to prevent the interceptor from intercepting the request "uploadPostImage"
 
 const httpRequestService = {
   signUp: async (data: Partial<SingUpData>) => {
@@ -23,17 +24,16 @@ const httpRequestService = {
     }
   },
   createPost: async (data: PostData) => {
-    const res = await axios.post(`${url}/post`, data, {
-    });
+    const res = await axios.post(`${url}/post`, data, {});
     if (res.status === 201) {
       return res.data;
     }
   },
   createComment: async (data: PostData) => {
-    const res = await axios.post(
-      `${url}/comment/${data.parentId}`,
-      {content: data.content, images: data.images},
-    );
+    const res = await axios.post(`${url}/comment/${data.parentId}`, {
+      content: data.content,
+      images: data.images,
+    });
     if (res.status === 201) {
       return res.data;
     }
@@ -53,7 +53,7 @@ const httpRequestService = {
     const res = await axios.get(`${url}/post/${query}`, {
       params: {
         limit: query[0],
-      }
+      },
     });
     if (res.status === 200) {
       return res.data;
@@ -71,29 +71,27 @@ const httpRequestService = {
     }
   },
   doesFollow: async (id: string) => {
-    const res = await axios.get(`${url}/follower/follow/${id}`, {
-    });
+    const res = await axios.get(`${url}/follower/follow/${id}`, {});
     if (res.status === 200) {
       return res.data;
     }
   },
   me: async () => {
-    const res = await axios.get(`${url}/user/me`, {
-    });
+    const res = await axios.get(`${url}/user/me`, {});
     if (res.status === 200) {
       return res.data;
     }
   },
   getPostById: async (id: string) => {
-    const res = await axios.get(`${url}/post/${id}`, {
-    });
+    const res = await axios.get(`${url}/post/${id}`, {});
     if (res.status === 200) {
       return res.data;
     }
   },
   createReaction: async (postId: string, reaction: string) => {
     const res = await axios.post(
-      `${url}/reaction/${postId}`, {},
+      `${url}/reaction/${postId}`,
+      {},
       {
         params: {
           type: reaction,
@@ -145,10 +143,8 @@ const httpRequestService = {
       if (!axios.isCancel(error)) console.log(error);
     }
   },
-
   getProfile: async (id: string) => {
-    const res = await axios.get(`${url}/user/${id}`, {
-    });
+    const res = await axios.get(`${url}/user/${id}`, {});
     if (res.status === 200) {
       return res.data;
     }
@@ -170,83 +166,63 @@ const httpRequestService = {
     }
   },
   getPostsFromProfile: async (id: string) => {
-    const res = await axios.get(`${url}/post/by_user/${id}`, {
-    });
+    const res = await axios.get(`${url}/post/by_user/${id}`, {});
 
     if (res.status === 200) {
       return res.data;
     }
   },
-
   isLogged: async () => {
-    const res = await axios.get(`${url}/user/me`, {
-    });
+    const res = await axios.get(`${url}/user/me`, {});
     return res.status === 200;
   },
-
   getProfileView: async (id: string) => {
-    const res = await axios.get(`${url}/user/${id}`, {
-    });
+    const res = await axios.get(`${url}/user/${id}`, {});
 
     if (res.status === 200) {
       return res.data;
     }
   },
-
   deleteProfile: async () => {
-    const res = await axios.delete(`${url}/user/me`, {
-    });
+    const res = await axios.delete(`${url}/user/me`, {});
 
     if (res.status === 204) {
       localStorage.removeItem("token");
     }
   },
-
   getContacts: async () => {
-    const res = await axios.get(`${url}/message/chat`, {
-    });
+    const res = await axios.get(`${url}/message/chat`, {});
 
     if (res.status === 200) {
       return res.data;
     }
   },
-
   getMutualFollows: async () => {
-    const res = await axios.get(`${url}/follower/mutual/`, {
-    });
+    const res = await axios.get(`${url}/follower/mutual/`, {});
 
     if (res.status === 200) {
       return res.data;
     }
   },
-
   createChat: async (id: string) => {
-    const res = await axios.post(
-      `${url}/chat`,
-      {
-        users: [id],
-      }
-    );
+    const res = await axios.post(`${url}/chat`, {
+      users: [id],
+    });
 
     if (res.status === 201) {
       return res.data;
     }
   },
-
   getChat: async (id: string) => {
-    const res = await axios.get(`${url}/message/chat/${id}`, {
-    });
+    const res = await axios.get(`${url}/message/chat/${id}`, {});
 
     if (res.status === 200) {
       return res.data;
     }
   },
-
   deletePost: async (id: string) => {
-    await axios.delete(`${url}/post/${id}`, {
-    });
+    await axios.delete(`${url}/post/${id}`, {});
   },
-
   getPaginatedCommentsByPostId: async (
     id: string,
     limit: number,
@@ -263,8 +239,7 @@ const httpRequestService = {
     }
   },
   getCommentsByPostId: async (id: string) => {
-    const res = await axios.get(`${url}/comment/${id}`, {
-    });
+    const res = await axios.get(`${url}/comment/${id}`, {});
     if (res.status === 200) {
       return res.data;
     }
@@ -278,9 +253,9 @@ const httpRequestService = {
     if (res.status === 200) {
       const presignedUrl = res.data.presignedUrl;
       const imageUrl = res.data.fileUrl;
-  
+
       try {
-        const uploadResponse = await axios.put(presignedUrl, file, {
+        const uploadResponse = await axiosInstance.put(presignedUrl, file, {
           headers: {
             "Content-Type": file.type,
           },
@@ -292,14 +267,9 @@ const httpRequestService = {
         console.error(err);
       }
     }
-  }
+  },
 };
 
 const useHttpRequestService = () => httpRequestService;
 
-// For class component (remove when unused)
-class HttpService {
-  service = httpRequestService;
-}
-
-export { useHttpRequestService, HttpService };
+export { useHttpRequestService };
