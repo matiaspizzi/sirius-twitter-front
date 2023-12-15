@@ -3,7 +3,8 @@ import styled from "styled-components";
 export const StyledContactListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  align-content: center;
   width: 35%;
   height: 100%;
   border-right: 1px solid ${(props) => props.theme.colors.containerLine};

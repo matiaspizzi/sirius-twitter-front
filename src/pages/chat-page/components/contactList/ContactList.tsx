@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import UserDataBox from "../../../../components/user-data-box/UserDataBox";
 import { StyledContactListContainer } from "./ContactListContainer";
 import { useTranslation } from "react-i18next";
-
+import Loader from "../../../../components/loader/Loader";
+import { time } from "console";
 interface Contact {
   name: string;
   username: string;
@@ -18,6 +19,7 @@ interface ContactListProps {
 
 const ContactList = ({ handleContact }: ContactListProps) => {
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const service = useHttpRequestService();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -31,6 +33,7 @@ const ContactList = ({ handleContact }: ContactListProps) => {
         (contact, index, self) =>
           index === self.findIndex((t) => t.id === contact.id)
       );
+      setLoading(false);
       setContacts(removedDuplicates);
     } catch (e) {
       navigate("/sign-in");
@@ -45,7 +48,8 @@ const ContactList = ({ handleContact }: ContactListProps) => {
     <>
       <StyledContactListContainer>
         <h5>{t("header.contacts")}</h5>
-        {contacts.length === 0 && <h4>{t("message.noContacts")}</h4>}
+        {loading && <Loader />}
+        {!loading && contacts.length === 0 && <h4>{t("message.noContacts")}</h4>}
         {contacts.map((contact) => {
           return (
             <UserDataBox

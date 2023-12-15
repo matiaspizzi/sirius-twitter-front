@@ -3,8 +3,9 @@ import styled from "styled-components";
 export const StyledMessageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
+  height: 100%;
   border-top: 1px solid ${(props) => props.theme.colors.containerLine};
   overflow-y: hidden;
 
