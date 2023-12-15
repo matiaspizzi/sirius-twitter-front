@@ -20,7 +20,7 @@ interface SignUpData {
   confirmPassword: string;
 }
 const SignUpPage = () => {
-  const httpRequestService = useHttpRequestService();
+  const service = useHttpRequestService();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [error, setError] = useState("");
@@ -35,7 +35,7 @@ const SignUpPage = () => {
     validationSchema: validationSchema,
     onSubmit: (values: SignUpData) => {
       const { confirmPassword, ...requestData } = values;
-      httpRequestService
+      service
       .signUp(requestData)
       .then(() => navigate("/"))
       .catch((e) => {
