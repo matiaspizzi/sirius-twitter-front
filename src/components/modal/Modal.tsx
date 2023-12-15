@@ -24,6 +24,11 @@ const Modal = ({
   img,
   title,
 }: ModalProps) => {
+  const handleClickOutside = (event: React.MouseEvent) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
   
   const portalElement = document.getElementById("portal");
   if (!portalElement) {
@@ -32,7 +37,7 @@ const Modal = ({
     return ReactDom.createPortal(
       <>
         {show && (
-          <StyledBlurredBackground>
+          <StyledBlurredBackground onClick={handleClickOutside}>
             <StyledModalContainer>
               <StyledContainer alignItems={"center"} justifyContent={"center"}>
                 {img && (
