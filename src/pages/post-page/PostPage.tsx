@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyledContainer } from "../../components/common/Container";
 import Tweet from "../../components/tweet/Tweet";
 import Loader from "../../components/loader/Loader";
@@ -10,8 +10,8 @@ import { useHttpRequestService } from "../../service/HttpRequestService";
 
 const PostPage = () => {
 
-  const [postId, setPostId] = React.useState(window.location.href.split("/")[4]);
-  const [post, setPost] = React.useState(undefined);
+  const [postId, setPostId] = useState(window.location.href.split("/")[4]);
+  const [post, setPost] = useState(undefined);
 
   const service = useHttpRequestService();
 
@@ -26,7 +26,7 @@ const PostPage = () => {
       });
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchPost();
   }, [postId])
 

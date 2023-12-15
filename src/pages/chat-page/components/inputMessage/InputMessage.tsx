@@ -22,7 +22,7 @@ const InputMessage = ({ handleSendMessage }: InputMessageProps) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <button type="submit">Send</button>
+        <button type="submit" disabled={!message}>Send</button>
       </form>
     </StyledInputMessage>
   );

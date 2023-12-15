@@ -14,7 +14,7 @@ import ChatPage from "../../pages/chat-page/ChatPage";
 
 const WithNav = () => {
   const token = localStorage.getItem("token");
-
+//chequear que sea valido
   return (
     <StyledSideBarPageWrapper>
       <NavBar />
