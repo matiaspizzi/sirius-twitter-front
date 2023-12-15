@@ -1,19 +1,19 @@
-import React, { Component } from "react";
+import React from "react";
 import { StyledContainer } from "../../components/common/Container";
 import Tweet from "../../components/tweet/Tweet";
 import Loader from "../../components/loader/Loader";
-import { HttpService } from "../../service/HttpRequestService";
 import TweetBox from "../../components/tweet-box/TweetBox";
 import { StyledH5 } from "../../components/common/text";
 import { StyledFeedContainer } from "../home-page/components/contentContainer/FeedContainer";
 import CommentFeed from "../../components/feed/CommentFeed";
+import { useHttpRequestService } from "../../service/HttpRequestService";
 
 const PostPage = () => {
 
   const [postId, setPostId] = React.useState(window.location.href.split("/")[4]);
   const [post, setPost] = React.useState(undefined);
 
-  const service = new HttpService().service;
+  const service = useHttpRequestService();
 
   const fetchPost = () => {
     service
