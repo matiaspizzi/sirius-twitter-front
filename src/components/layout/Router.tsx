@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
 import { StyledSideBarPageWrapper } from "../../pages/side-bar-page/SideBarPageWrapper";
 import NavBar from "../navbar/NavBar";
@@ -11,15 +11,43 @@ import TweetPage from "../../pages/create-tweet-page/TweetPage";
 import CommentPage from "../../pages/create-comment-page/CommentPage";
 import PostPage from "../../pages/post-page/PostPage";
 import ChatPage from "../../pages/chat-page/ChatPage";
+import { useHttpRequestService } from "../../service/HttpRequestService";
+import Loader from "../loader/Loader";
 
 const WithNav = () => {
-  const token = localStorage.getItem("token");
-//chequear que sea valido
+  const token = localStorage.getItem("token")?.split(" ")[1]
+  const service = useHttpRequestService()
+  const [isValid, setIsValid ] = useState(true)
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    if (token) {
+      service.verifyToken(token)
+        .then(res => {
+          console.log(res)
+          res ? setIsValid(true) : setIsValid(false)
+        })
+        .catch(e => {
+          setIsValid(false)
+        })
+    } else {
+      setIsValid(false)
+    }
+    setLoading(false)
+  }, [])
+
+
   return (
-    <StyledSideBarPageWrapper>
-      <NavBar />
-      {token ? <Outlet /> : <Navigate to="/sign-in" replace={true} />}
-    </StyledSideBarPageWrapper>
+    <>
+      {loading && <Loader />}
+      {isValid && !loading && 
+      <>
+        <StyledSideBarPageWrapper>
+          <NavBar />
+          <Outlet /> 
+        </StyledSideBarPageWrapper>
+      </>}
+      {!loading && !isValid && <Navigate to="/sign-in" replace={true} />}
+    </>
   );
 };
 

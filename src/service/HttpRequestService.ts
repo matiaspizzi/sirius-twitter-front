@@ -268,6 +268,14 @@ const httpRequestService = {
       }
     }
   },
+  verifyToken: async (token: string) => {
+    const res = await axios.post(`${url}/auth/verifyToken`, {token})
+    console.log(res)
+    if(res.status == 200) {
+      return res.data.isValid
+    }
+    return false
+  }
 };
 
 const useHttpRequestService = () => httpRequestService;
